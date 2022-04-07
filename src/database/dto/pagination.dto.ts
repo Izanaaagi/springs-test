@@ -5,8 +5,8 @@ export class PaginationParamsDto {
   @IsOptional()
   @Type(() => Number)
   @IsNumber()
-  @Min(0)
-  offset?: number;
+  @Min(1)
+  page: number;
 
   @IsOptional()
   @Type(() => Number)

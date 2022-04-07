@@ -1,15 +1,15 @@
 import {
-  Controller,
-  Get,
   Body,
-  Patch,
-  Param,
+  Controller,
   Delete,
-  UseGuards,
+  Get,
   HttpCode,
-  Query,
+  Param,
+  Patch,
   Post,
+  Query,
   Req,
+  UseGuards,
 } from '@nestjs/common';
 import { PostsService } from './posts.service';
 import { CreatePostDto } from './dto/create-post.dto';
@@ -37,12 +37,12 @@ export class PostsController {
   @Get()
   findAll(
     @Query('searchString') searchString: string,
-    @Query() { offset, limit }: PaginationParamsDto,
+    @Query() { page, limit }: PaginationParamsDto,
   ): Promise<PaginatedPostsResponse> {
     if (searchString) {
-      // return this.postsService.search(searchString, offset, limit);
+      return this.postsService.search(searchString, page, limit);
     }
-    return this.postsService.findAll(offset, limit);
+    return this.postsService.findAll(page, limit);
   }
 
   @Get(':id')
