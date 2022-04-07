@@ -2,28 +2,28 @@ import {
   Column,
   CreateDateColumn,
   Entity,
-  OneToMany,
+  ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import Post from '../../posts/entities/post.entity';
-import { IsEmail, MaxLength, MinLength } from 'class-validator';
-import { Exclude } from 'class-transformer';
+import User from '../../users/entities/user.entity';
+import { IsString, MaxLength, MinLength } from 'class-validator';
 
 @Entity()
-export default class User {
+export default class Post {
   @PrimaryGeneratedColumn()
   public id: number;
 
-  @Column({ unique: true })
-  @IsEmail()
-  email: string;
+  @Column()
+  @IsString()
+  @MinLength(2)
+  @MaxLength(64)
+  title: string;
 
   @Column()
-  @Exclude()
-  @MinLength(8)
-  @MaxLength(16)
-  password: string;
+  @IsString()
+  @MinLength(24)
+  content: string;
 
   @CreateDateColumn({
     type: 'timestamp with time zone',
@@ -38,6 +38,6 @@ export default class User {
   })
   updatedAt: Date;
 
-  @OneToMany(() => Post, (post) => post.user)
-  posts: Array<Post>;
+  @ManyToOne(() => User, (user) => user.posts)
+  user: User;
 }
