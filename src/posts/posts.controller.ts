@@ -13,7 +13,7 @@ import {
 import { PostsService } from './posts.service';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
-import JwtAuthGuard from '../auth/guards/jwt.guard';
+import JwtAuthGuard from '../authentication/guards/jwt.guard';
 import { PaginationParamsDto } from '../database/dto/pagination.dto';
 import PostEntity from './entities/post.entity';
 import { PaginatedPostsResponse } from './responses/paginated-posts.response';
