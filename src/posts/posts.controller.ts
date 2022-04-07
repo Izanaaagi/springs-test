@@ -9,6 +9,7 @@ import {
   HttpCode,
   Query,
   Post,
+  Req,
 } from '@nestjs/common';
 import { PostsService } from './posts.service';
 import { CreatePostDto } from './dto/create-post.dto';
@@ -17,6 +18,7 @@ import JwtAuthGuard from '../authentication/guards/jwt.guard';
 import { PaginationParamsDto } from '../database/dto/pagination.dto';
 import PostEntity from './entities/post.entity';
 import { PaginatedPostsResponse } from './responses/paginated-posts.response';
+import RequestWithUser from '../authentication/requests/request-with-user';
 
 @UseGuards(JwtAuthGuard)
 @Controller('posts')
@@ -24,8 +26,11 @@ export class PostsController {
   constructor(private readonly postsService: PostsService) {}
 
   @Post()
-  create(@Body() createPostDto: CreatePostDto): Promise<PostEntity> {
-    return this.postsService.create(createPostDto);
+  create(
+    @Body() createPostDto: CreatePostDto,
+    @Req() req: RequestWithUser,
+  ): Promise<PostEntity> {
+    return this.postsService.create(createPostDto, req.user);
   }
 
   @Get()

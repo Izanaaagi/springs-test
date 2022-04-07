@@ -5,6 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import Post from './entities/post.entity';
 import { PostNotFoundException } from './exceptions/post-not-found.exception';
+import User from '../users/entities/user.entity';
 
 @Injectable()
 export class PostsService {
@@ -13,8 +14,11 @@ export class PostsService {
     private postsRepository: Repository<Post>,
   ) {}
 
-  async create(createPostDto: CreatePostDto): Promise<Post> {
-    const newPost = await this.postsRepository.create(createPostDto);
+  async create(createPostDto: CreatePostDto, user: User): Promise<Post> {
+    const newPost = await this.postsRepository.create({
+      ...createPostDto,
+      user,
+    });
     await this.postsRepository.save(newPost);
     return newPost;
   }
@@ -36,7 +40,9 @@ export class PostsService {
   }
 
   async findOne(id: number): Promise<Post> {
-    const post = await this.postsRepository.findOne(id);
+    const post = await this.postsRepository.findOne(id, {
+      relations: ['user'],
+    });
     if (post) {
       return post;
     }
