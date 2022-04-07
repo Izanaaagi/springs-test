@@ -11,6 +11,7 @@ import { CreateUserDto } from '../users/dto/create-user.dto';
 import * as bcrypt from 'bcrypt';
 import { ErrorCodes } from '../database/error-codes.enum';
 import { SignInResponse } from './responses/sign-in.response';
+import { WrongCredentialsException } from './exceptions/wrong-credentials.exception';
 
 @Injectable()
 export class AuthService {
@@ -51,9 +52,7 @@ export class AuthService {
       await this.verifyPassword(plainTextPassword, user.password);
       return user;
     } catch (error) {
-      throw new BadRequestException({
-        message: 'Wrong credentials provided',
-      });
+      throw new WrongCredentialsException();
     }
   }
 
@@ -66,9 +65,7 @@ export class AuthService {
       hashedPassword,
     );
     if (!isPasswordMatching) {
-      throw new BadRequestException({
-        message: 'Wrong credentials provided',
-      });
+      throw new WrongCredentialsException();
     }
   }
 }

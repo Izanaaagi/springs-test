@@ -1,8 +1,9 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import User from './entities/user.entity';
 import { Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
+import { UserNotFoundException } from './exceptions/user-not-found.exception';
 
 @Injectable()
 export class UsersService {
@@ -15,7 +16,7 @@ export class UsersService {
     if (user) {
       return user;
     }
-    throw new NotFoundException({ message: 'User Not Found' });
+    throw new UserNotFoundException();
   }
 
   async getByEmail(email: string): Promise<User> {
@@ -23,7 +24,7 @@ export class UsersService {
     if (user) {
       return user;
     }
-    throw new NotFoundException({ message: 'User Not Found' });
+    throw new UserNotFoundException();
   }
 
   async create(user: CreateUserDto): Promise<User> {
