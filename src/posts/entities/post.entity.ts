@@ -38,6 +38,6 @@ export default class Post {
   })
   updatedAt: Date;
 
-  @ManyToOne(() => User, (user) => user.posts)
+  @ManyToOne(() => User, (user) => user.posts, { cascade: true })
   user: User;
 }

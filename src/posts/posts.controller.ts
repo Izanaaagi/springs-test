@@ -19,6 +19,7 @@ import { PaginationParamsDto } from '../database/dto/pagination.dto';
 import PostEntity from './entities/post.entity';
 import { PaginatedPostsResponse } from './responses/paginated-posts.response';
 import RequestWithUser from '../authentication/requests/request-with-user';
+import { PermissionGuard } from './guards/permission.guard';
 
 @UseGuards(JwtAuthGuard)
 @Controller('posts')
@@ -50,6 +51,7 @@ export class PostsController {
   }
 
   @Patch(':id')
+  @UseGuards(PermissionGuard)
   async update(
     @Param('id') id: number,
     @Body() updatePostDto: UpdatePostDto,
@@ -57,8 +59,9 @@ export class PostsController {
     return await this.postsService.update(id, updatePostDto);
   }
 
-  @HttpCode(204)
   @Delete(':id')
+  @UseGuards(PermissionGuard)
+  @HttpCode(204)
   remove(@Param('id') id: number): Promise<void> {
     return this.postsService.remove(id);
   }
