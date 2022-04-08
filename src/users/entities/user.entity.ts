@@ -16,7 +16,6 @@ export default class User {
   public id: number;
 
   @Column({ unique: true })
-  @IsEmail()
   email: string;
 
   @Column()
@@ -46,4 +45,7 @@ export default class User {
   })
   @Exclude()
   public currentHashedRefreshToken?: string;
+
+  @Column({ default: false })
+  public isEmailConfirmed: boolean;
 }

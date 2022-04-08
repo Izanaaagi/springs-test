@@ -8,11 +8,13 @@ import { LocalStrategy } from './strategies/local.strategy';
 import { PassportModule } from '@nestjs/passport';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { JwtRefreshTokenStrategy } from './strategies/jwt-refresh.strategy';
+import { EmailConfirmationModule } from '../email-confirmation/email-confirmation.module';
 
 @Module({
   imports: [
     UsersModule,
     ConfigModule,
+    EmailConfirmationModule,
     PassportModule,
     JwtModule.registerAsync({
       imports: [ConfigModule],

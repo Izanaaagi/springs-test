@@ -1,8 +1,4 @@
-import {
-  BadRequestException,
-  Injectable,
-  InternalServerErrorException,
-} from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import User from '../users/entities/user.entity';
 import { UsersService } from '../users/users.service';
@@ -13,6 +9,7 @@ import { ErrorCodes } from '../database/error-codes.enum';
 import { TokensResponse } from './responses/tokens-response';
 import { WrongCredentialsException } from './exceptions/wrong-credentials.exception';
 import { ConfigService } from '@nestjs/config';
+import { EmailAlreadyExistException } from './exceptions/email-already-exist.exception';
 
 @Injectable()
 export class AuthService {
@@ -31,11 +28,8 @@ export class AuthService {
       });
     } catch (error) {
       if (error?.code === ErrorCodes.UniqueViolation) {
-        throw new BadRequestException({
-          message: 'User with that email already exist',
-        });
+        throw new EmailAlreadyExistException(registerData.email);
       }
-      throw new InternalServerErrorException();
     }
   }
 
