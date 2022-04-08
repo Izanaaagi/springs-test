@@ -40,4 +40,10 @@ export default class User {
 
   @OneToMany(() => Post, (post) => post.user)
   posts: Array<Post>;
+
+  @Column({
+    nullable: true,
+  })
+  @Exclude()
+  public currentHashedRefreshToken?: string;
 }

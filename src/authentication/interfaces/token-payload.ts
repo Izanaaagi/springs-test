@@ -1,4 +1,4 @@
 export class TokenPayload {
   id: number;
-  email: string;
+  email?: string;
 }

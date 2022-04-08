@@ -41,4 +41,33 @@ export class UsersService {
     await this.usersRepository.update(id, updateData);
     return await this.findOne(id);
   }
+
+  async setCurrentRefreshToken(refreshToken: string, id: number) {
+    const currentHashedRefreshToken = await bcrypt.hash(refreshToken, 10);
+    await this.usersRepository.update(id, {
+      currentHashedRefreshToken,
+    });
+  }
+
+  async getUserIfRefreshTokenMatches(
+    refreshToken: string,
+    id: number,
+  ): Promise<User> {
+    const user = await this.findOne(id);
+
+    const isRefreshTokenMatching = await bcrypt.compare(
+      refreshToken,
+      user.currentHashedRefreshToken,
+    );
+
+    if (isRefreshTokenMatching) {
+      return user;
+    }
+  }
+
+  async removeRefreshToken(id: number) {
+    return await this.usersRepository.update(id, {
+      currentHashedRefreshToken: null,
+    });
+  }
 }

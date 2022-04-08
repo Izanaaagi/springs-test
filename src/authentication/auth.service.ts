@@ -10,14 +10,16 @@ import { TokenPayload } from './interfaces/token-payload';
 import { CreateUserDto } from '../users/dto/create-user.dto';
 import * as bcrypt from 'bcrypt';
 import { ErrorCodes } from '../database/error-codes.enum';
-import { SignInResponse } from './responses/sign-in.response';
+import { TokensResponse } from './responses/tokens-response';
 import { WrongCredentialsException } from './exceptions/wrong-credentials.exception';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly jwtService: JwtService,
     private readonly usersService: UsersService,
+    private readonly configService: ConfigService,
   ) {}
 
   async signUp(registerData: CreateUserDto): Promise<User> {
@@ -37,10 +39,29 @@ export class AuthService {
     }
   }
 
-  signIn(user: User): SignInResponse {
-    const payload: TokenPayload = { id: user.id, email: user.email };
-    const access_token = this.jwtService.sign(payload);
-    return { access_token };
+  async getAccessToken(id: number): Promise<string> {
+    const payload: TokenPayload = { id };
+    return await this.jwtService.signAsync(payload, {
+      secret: this.configService.get('JWT_TOKEN_SECRET'),
+      expiresIn: `${this.configService.get('JWT_EXPIRATION_TIME')}s`,
+    });
+  }
+
+  async getRefreshToken(id: number): Promise<string> {
+    const payload: TokenPayload = { id };
+    return this.jwtService.signAsync(payload, {
+      secret: this.configService.get('JWT_REFRESH_SECRET'),
+      expiresIn: `${this.configService.get('JWT_REFRESH_EXPIRATION_TIME')}s`,
+    });
+  }
+
+  async refreshTokens(id: number): Promise<TokensResponse> {
+    const accessToken = await this.getAccessToken(id);
+    const refreshToken = await this.getRefreshToken(id);
+
+    await this.usersService.setCurrentRefreshToken(refreshToken, id);
+
+    return { accessToken, refreshToken };
   }
 
   async getAuthenticatedUser(
